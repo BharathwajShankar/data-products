@@ -81,7 +81,7 @@ object DeletedUsersAssetsReportJob extends IJob with BaseReportsJob with Seriali
     val decryptUsernameUDF = udf((encryptedUsername: String) => {
       DecryptUtil.decryptData(encryptedUsername)
     })
-    val decryptedFinalDF = finalDF.withColumn("decryptedUsername", decryptUsernameUDF(finalDF("username")))
+    val decryptedFinalDF = finalDF.withColumn("username", decryptUsernameUDF(finalDF("username")))
     decryptedFinalDF.show()
     val container = AppConf.getConfig("cloud.container.reports")
     val objectKey = AppConf.getConfig("delete.user.cloud.objectKey")

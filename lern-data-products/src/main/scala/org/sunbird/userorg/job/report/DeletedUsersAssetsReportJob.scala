@@ -10,7 +10,7 @@ import org.ekstep.analytics.framework.conf.AppConf
 import org.ekstep.analytics.framework.util.DatasetUtil.extensions
 import org.ekstep.analytics.framework.util.{JSONUtils, JobLogger, RestUtil}
 import org.ekstep.analytics.framework.{FrameworkContext, IJob, JobConfig}
-import org.sunbird.core.util.Constants
+import org.sunbird.core.util.{Constants, DecryptUtil}
 import org.sunbird.lms.exhaust.collection.{CollectionDetails, CourseBatch, DeleteCollectionInfo}
 import org.sunbird.lms.job.report.BaseReportsJob
 
@@ -78,7 +78,11 @@ object DeletedUsersAssetsReportJob extends IJob with BaseReportsJob with Seriali
     )
     // Deduplicate the combined DataFrame based on user ID
     val finalDF = combinedDF.distinct()
-    finalDF.show()
+    val decryptUsernameUDF = udf((encryptedUsername: String) => {
+      DecryptUtil.decryptData(encryptedUsername)
+    })
+    val decryptedFinalDF = finalDF.withColumn("decryptedUsername", decryptUsernameUDF(finalDF("username")))
+    decryptedFinalDF.show()
     val container = AppConf.getConfig("cloud.container.reports")
     val objectKey = AppConf.getConfig("delete.user.cloud.objectKey")
     val storageConfig = getStorageConfig(container, objectKey, jobConfig)

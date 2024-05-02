@@ -42,7 +42,7 @@ jobs:
           name: Build analytics-core dependency jar
           command: |
             echo $(java -version)
-            cd sunbird-analytics-core && mvn install -DskipTests -DCLOUD_STORE_GROUP_ID=$CLOUD_STORE_GROUP_ID -DCLOUD_STORE_ARTIFACT_ID=$CLOUD_STORE_ARTIFACT_ID -DCLOUD_STORE_VERSION=1.4.7
+            cd sunbird-analytics-core && mvn install -DskipTests -DCLOUD_STORE_GROUP_ID=$CLOUD_STORE_GROUP_ID -DCLOUD_STORE_ARTIFACT_ID=$CLOUD_STORE_ARTIFACT_ID -DCLOUD_STORE_VERSION=1.4.6
       - run:
           name: Build core-data-products dependency jar
           command:   |
@@ -53,7 +53,7 @@ jobs:
           no_output_timeout: 20m
           command: |
             echo $(java -version)
-            cd lern-data-products && mvn scoverage:report -DCLOUD_STORE_GROUP_ID=$CLOUD_STORE_GROUP_ID -DCLOUD_STORE_ARTIFACT_ID=$CLOUD_STORE_ARTIFACT_ID -DCLOUD_STORE_VERSION=1.4.7
+            cd lern-data-products && mvn scoverage:report -DCLOUD_STORE_GROUP_ID=$CLOUD_STORE_GROUP_ID -DCLOUD_STORE_ARTIFACT_ID=$CLOUD_STORE_ARTIFACT_ID -DCLOUD_STORE_VERSION=1.4.6
       - save_cache:
           key: dp-dependency-cache-{{ checksum "lern-data-products/pom.xml" }}
           paths: ~/.m2

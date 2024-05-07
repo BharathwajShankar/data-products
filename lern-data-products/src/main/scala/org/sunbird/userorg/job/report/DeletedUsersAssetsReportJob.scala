@@ -94,7 +94,7 @@ object DeletedUsersAssetsReportJob extends IJob with BaseReportsJob with Seriali
   def name(): String = "DeletedUsersAssetsReportJob"
   def fetchContentAssets(userIds: List[String], channels: List[String])(implicit spark: SparkSession): DataFrame = {
     System.out.println("inside content assets")
-    val apiURL = Constants.CONTENT_SEARCH_URL
+    val apiURL = Constants.COMPOSITE_SEARCH_URL
     val limit = 10000 // Set the desired limit for each request
     var offset = 0
     var totalRecords = 0

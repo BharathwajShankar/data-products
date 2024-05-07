@@ -167,13 +167,6 @@ service:
     url: http://{{private_ingressgateway_ip}}/search
     path: /v3/search
 
-lms:
-  service:
-    url: http://{{private_ingressgateway_ip}}/lms
-  batch:
-    search:
-      path: /v1/course/batch/search
-
 analytics:
   home: /mount/data/analytics
   soft_path: /mount/data/analytics

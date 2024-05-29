@@ -31,8 +31,8 @@ object DeletedUsersAssetsReportJob extends IJob with BaseReportsJob with Seriali
 
   override def main(config: String)(implicit sc: Option[SparkContext], fc: Option[FrameworkContext]): Unit = {
     val jobConfig = JSONUtils.deserialize[JobConfig](config)
-    val configuredUserId: List[String] = getValidatedList(jobConfig("modelParams").asInstanceOf[Map[String, Option[Any]]].get("configuredUserId"))
-    val configuredChannel: List[String] = getValidatedList(jobConfig("modelParams").asInstanceOf[Map[String, Option[Any]]].get("configuredChannel"))
+    val configuredUserId: List[String] = getValidatedList(jobConfig.modelParams.get("configuredUserId").toString)
+    val configuredChannel: List[String] = getValidatedList(jobConfig.modelParams.get("configuredChannel").toString)
     println(s"Configured User IDs: $configuredUserId")
     println(s"Configured Channels: $configuredChannel")
     JobLogger.init(name())
@@ -291,11 +291,11 @@ object DeletedUsersAssetsReportJob extends IJob with BaseReportsJob with Seriali
     df
   }
 
-  def getValidatedList(configValue: Option[Any]): List[String] = {
-    configValue match {
-      case Some(value: String) if value.nonEmpty =>
-        value.split(",").map(_.trim).filter(_.nonEmpty).toList
-      case _ => List.empty[String]
+  def getValidatedList(configValue: String): List[String] = {
+    if (configValue.nonEmpty) {
+      configValue.split(",").map(_.trim).filter(_.nonEmpty).toList
+    } else {
+      List.empty[String]
     }
   }
 

@@ -33,8 +33,6 @@ object DeletedUsersAssetsReportJob extends IJob with BaseReportsJob with Seriali
     val jobConfig = JSONUtils.deserialize[JobConfig](config)
     val configuredUserId: List[String] = getValidatedList(jobConfig.modelParams.get("configuredUserId").toString)
     val configuredChannel: List[String] = getValidatedList(jobConfig.modelParams.get("configuredChannel").toString)
-    println(s"Configured User IDs: $configuredUserId")
-    println(s"Configured Channels: $configuredChannel")
     JobLogger.init(name())
     JobLogger.start("Started executing", Option(Map("config" -> config, "model" -> name)))
     val spark = openSparkSession(jobConfig)
@@ -153,6 +151,7 @@ object DeletedUsersAssetsReportJob extends IJob with BaseReportsJob with Seriali
       )
 
       val request = JSONUtils.serialize(requestMap)
+      println(s"request: $request")
       val response = RestUtil.post[CollectionDetails](apiURL, request).result
       val count = response.getOrElse("count", 0).asInstanceOf[Int]
 

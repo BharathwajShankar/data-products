@@ -31,8 +31,10 @@ object DeletedUsersAssetsReportJob extends IJob with BaseReportsJob with Seriali
 
   override def main(config: String)(implicit sc: Option[SparkContext], fc: Option[FrameworkContext]): Unit = {
     val jobConfig = JSONUtils.deserialize[JobConfig](config)
-    val configuredUserId: List[String] = jobConfig.modelParams.get("configuredUserId").asInstanceOf[List[String]]
-    val configuredChannel: List[String] = jobConfig.modelParams.get("configuredChannel").asInstanceOf[List[String]]
+    val configuredUserId: List[String] = getValidatedList(jobConfig("modelParams").asInstanceOf[Map[String, Option[Any]]].get("configuredUserId"))
+    val configuredChannel: List[String] = getValidatedList(jobConfig("modelParams").asInstanceOf[Map[String, Option[Any]]].get("configuredChannel"))
+    println(s"Configured User IDs: $configuredUserId")
+    println(s"Configured Channels: $configuredChannel")
     JobLogger.init(name())
     JobLogger.start("Started executing", Option(Map("config" -> config, "model" -> name)))
     val spark = openSparkSession(jobConfig)
@@ -287,6 +289,14 @@ object DeletedUsersAssetsReportJob extends IJob with BaseReportsJob with Seriali
     val df = spark.createDataFrame(spark.sparkContext.parallelize(rows), schema)
     println("total count of mlAssetDf : " + df.count())
     df
+  }
+
+  def getValidatedList(configValue: Option[Any]): List[String] = {
+    configValue match {
+      case Some(value: String) if value.nonEmpty =>
+        value.split(",").map(_.trim).filter(_.nonEmpty).toList
+      case _ => List.empty[String]
+    }
   }
 
   def fetchMlData(userIds: List[String]): util.List[Document] = {

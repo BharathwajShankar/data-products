@@ -292,10 +292,10 @@ object DeletedUsersAssetsReportJob extends IJob with BaseReportsJob with Seriali
   }
 
   def getValidatedList(configValue: String): List[String] = {
-    if (configValue.nonEmpty) {
-      configValue.split(",").map(_.trim).filter(_.nonEmpty).toList
-    } else {
-      List.empty[String]
+    Option(configValue) match {
+      case Some(value) if value.toLowerCase != "null" =>
+        value.split(",").map(_.trim).filter(_.nonEmpty).toList
+      case _ => List.empty[String]
     }
   }
 
